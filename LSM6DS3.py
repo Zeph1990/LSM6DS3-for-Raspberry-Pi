@@ -9,12 +9,16 @@ import math
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.I2C as I2C
 
+#Indirizzo fisico del sensore. E' scritto sul sensore stesso
 address = 0x6a
+#Voltaggio d'alimentazione del sensore
 ADC_ref = 5.0
+#Calibrazione del voltaggio a 0g
 zero_x = 1.569
 zero_y = 1.569
 zero_z = 1.569
 
+#La sensibilità è la standard: – 300 mV/g
 sensitivity_x = 0.3
 sensitivity_y = 0.3
 sensitivity_z = 0.3
@@ -63,7 +67,8 @@ class LSM6DS3:
 
         yv=(value_y/1024.0*ADC_ref-zero_y)/sensitivity_y
         zv=(value_z/1024.0*ADC_ref-zero_z)/sensitivity_z
-
+        #Calcola l'angolo tra i vettori Y e Z . *57.2957795 è per la conversione
+        #da radianti a gradi. +180 è l'offset
         angle_x =math.atan2(-yv,-zv)*57.2957795+180
 
         return angle_x;
@@ -74,7 +79,8 @@ class LSM6DS3:
 
         xv=(value_x/1024.0*ADC_ref-zero_x)/sensitivity_x
         zv=(value_z/1024.0*ADC_ref-zero_z)/sensitivity_z
-
+        #Calcola l'angolo tra i vettori X e Z . *57.2957795 è per la conversione
+        #da radianti a gradi. +180 è l'offset
         angle_y =math.atan2(-xv,-zv)*57.2957795+180
 
         return angle_y;
@@ -85,7 +91,8 @@ class LSM6DS3:
 
         xv=(value_x/1024.0*ADC_ref-zero_x)/sensitivity_x
         yv=(value_y/1024.0*ADC_ref-zero_y)/sensitivity_y
-
+        #Calcola l'angolo tra i vettori Y e X . *57.2957795 è per la conversione
+        #da radianti a gradi. +180 è l'offset
         angle_z =math.atan2(-yv,-xv)*57.2957795+180
 
         return angle_z;
@@ -97,5 +104,3 @@ class LSM6DS3:
     def readFloatGyroX(self):
         output = self.calcGyro(self.readRawGyroX())
         return output;
-
-
